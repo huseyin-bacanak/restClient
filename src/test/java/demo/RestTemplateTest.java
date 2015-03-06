@@ -14,11 +14,17 @@ import org.junit.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RestTemplateTest {
   @Test
@@ -60,7 +66,17 @@ public class RestTemplateTest {
     map.add("password", "test123");
     map.add("id", "1234");
 
-    String result = restTemplate.postForObject(url,map,  String.class);
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+    HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+
+//    List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
+//    messageConverters.add(new MappingJacksonHttpMessageConverter());
+//    messageConverters.add(new FormHttpMessageConverter());
+//    restTemplate.setMessageConverters(messageConverters);
+
+    String result = restTemplate.postForObject(url, request, String.class);
     Assert.assertNotNull(result);
   }
 }
